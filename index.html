@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruitment Funnel Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .input-section {
+            margin-bottom: 30px;
+        }
+        
+        .input-section h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .input-group label {
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .input-group input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .result-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .result-card h3 {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .result-card .value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .revenue-card {
+            background: #e8f5e8;
+            border: 1px solid #c3e6c3;
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .revenue-card h3 {
+            font-size: 1rem;
+            color: #2d5a2d;
+            margin-bottom: 10px;
+        }
+        
+        .revenue-card .revenue-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #1e7e34;
+        }
+        
+        .quarterly-section {
+            background: #f0f7ff;
+            border: 1px solid #b8daff;
+            border-radius: 6px;
+            padding: 25px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .quarterly-section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+        
+        .quarterly-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .quarter-card {
+            background: white;
+            border: 1px solid #d1ecf1;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .quarter-card h4 {
+            color: #0c5460;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            text-align: center;
+            font-weight: 600;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 8px;
+        }
+        
+        .quarter-revenue {
+            background: #e8f5e8;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .quarter-revenue .revenue-label {
+            font-size: 0.8rem;
+            color: #2d5a2d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+        
+        .quarter-revenue .revenue-amount {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e7e34;
+        }
+        
+        .quarter-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .metric-item {
+            background: #f8f9fa;
+            border-radius: 4px;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .metric-item .metric-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 3px;
+        }
+        
+        .metric-item .metric-label {
+            font-size: 0.75rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        
+        .ratios-info {
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .ratios-info h4 {
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        
+        .clear-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 15px;
+        }
+        
+        .clear-btn:hover {
+            background: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Recruitment Funnel Calculator</h1>
+            <p>Enter any metric to see what you need to achieve your targets</p>
+        </div>
+        
+        <div class="content">
+            <div class="input-section">
+                <h2>Performance Predictor</h2>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="cvs">CVs</label>
+                        <input type="number" id="cvs" placeholder="0" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="interviews">Interviews</label>
+                        <input type="number" id="interviews" placeholder="0" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="offers">Offers</label>
+                        <input type="number" id="offers" placeholder="0" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="deals">Deals</label>
+                        <input type="number" id="deals" placeholder="0" min="0">
+                    </div>
+                </div>
+                <button class="clear-btn" onclick="clearAll()">Clear All</button>
+            </div>
+            
+            <div class="results-grid">
+                <div class="result-card">
+                    <h3>CVs Expected</h3>
+                    <div class="value" id="result-cvs">0</div>
+                </div>
+                <div class="result-card">
+                    <h3>Interviews Expected</h3>
+                    <div class="value" id="result-interviews">0</div>
+                </div>
+                <div class="result-card">
+                    <h3>Offers Expected</h3>
+                    <div class="value" id="result-offers">0</div>
+                </div>
+                <div class="result-card">
+                    <h3>Deals Expected</h3>
+                    <div class="value" id="result-deals">0</div>
+                </div>
+            </div>
+            
+            <div class="revenue-card" id="revenue-display">
+                <h3>Total Revenue</h3>
+                <div class="revenue-value" id="total-revenue">$0</div>
+            </div>
+            
+            <div class="input-section">
+                <h2>Revenue Planning</h2>
+                <p style="color: #666; margin-bottom: 15px; font-size: 0.9rem;">Enter your annual revenue target to see breakdown by period</p>
+                <div style="display: flex; gap: 20px; align-items: end; flex-wrap: wrap;">
+                    <div class="input-group" style="max-width: 300px;">
+                        <label for="revenue">Annual Revenue Target ($)</label>
+                        <input type="number" id="revenue" placeholder="e.g. 500000" min="0">
+                    </div>
+                    <div class="input-group" style="max-width: 150px;">
+                        <label for="period-select">View By</label>
+                        <select id="period-select" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                            <option value="quarterly">Quarterly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="yearly">Yearly</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="clear-btn" onclick="clearRevenue()">Clear Revenue Target</button>
+            </div>
+            
+            <div class="quarterly-section" id="quarterly-display">
+                <h3 id="breakdown-title">Quarterly Breakdown</h3>
+                <div class="quarterly-grid" id="breakdown-grid">
+                    <div class="quarter-card">
+                        <h4>Q1</h4>
+                        <div id="q1-metrics"></div>
+                    </div>
+                    <div class="quarter-card">
+                        <h4>Q2</h4>
+                        <div id="q2-metrics"></div>
+                    </div>
+                    <div class="quarter-card">
+                        <h4>Q3</h4>
+                        <div id="q3-metrics"></div>
+                    </div>
+                    <div class="quarter-card">
+                        <h4>Q4</h4>
+                        <div id="q4-metrics"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ratios-info">
+                <h4>Conversion Ratios</h4>
+                <p>CVs → Interviews: 32.0% • Interviews → Offers: 23.8% • Offers → Deals: 50.0% • Avg Deal: $28,500</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const RATIOS = {
+            cvsToInterviews: 849 / 2652,      // 32.0%
+            interviewsToOffers: 202 / 849,    // 23.8%
+            offersToDeals: 101 / 202,         // 50.0%
+            averageDealSize: 28500
+        };
+
+        function formatNumber(num) {
+            if (num < 1 && num > 0) {
+                return num.toFixed(1);
+            }
+            return Math.round(num).toLocaleString();
+        }
+
+        function formatCurrency(num) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(num);
+        }
+
+        function calculate() {
+            const cvs = parseInt(document.getElementById('cvs').value) || 0;
+            const interviews = parseInt(document.getElementById('interviews').value) || 0;
+            const offers = parseInt(document.getElementById('offers').value) || 0;
+            const deals = parseInt(document.getElementById('deals').value) || 0;
+            const revenue = parseInt(document.getElementById('revenue').value) || 0;
+
+            let resultCvs = 0;
+            let resultInterviews = 0;
+            let resultOffers = 0;
+            let resultDeals = 0;
+            let showRevenue = false;
+            let showQuarterly = false;
+
+            // Calculate based on which input has a value
+            if (revenue > 0) {
+                resultDeals = revenue / RATIOS.averageDealSize;
+                resultOffers = resultDeals / RATIOS.offersToDeals;
+                resultInterviews = resultOffers / RATIOS.interviewsToOffers;
+                resultCvs = resultInterviews / RATIOS.cvsToInterviews;
+                showQuarterly = true;
+            } else if (deals > 0) {
+                resultDeals = deals;
+                resultOffers = deals / RATIOS.offersToDeals;
+                resultInterviews = resultOffers / RATIOS.interviewsToOffers;
+                resultCvs = resultInterviews / RATIOS.cvsToInterviews;
+                showRevenue = true;
+            } else if (offers > 0) {
+                resultOffers = offers;
+                resultDeals = offers * RATIOS.offersToDeals;
+                resultInterviews = offers / RATIOS.interviewsToOffers;
+                resultCvs = resultInterviews / RATIOS.cvsToInterviews;
+                showRevenue = true;
+            } else if (interviews > 0) {
+                resultInterviews = interviews;
+                resultOffers = interviews * RATIOS.interviewsToOffers;
+                resultDeals = resultOffers * RATIOS.offersToDeals;
+                resultCvs = interviews / RATIOS.cvsToInterviews;
+                showRevenue = true;
+            } else if (cvs > 0) {
+                resultCvs = cvs;
+                resultInterviews = cvs * RATIOS.cvsToInterviews;
+                resultOffers = resultInterviews * RATIOS.interviewsToOffers;
+                resultDeals = resultOffers * RATIOS.offersToDeals;
+                showRevenue = true;
+            }
+
+            const totalRevenue = resultDeals * RATIOS.averageDealSize;
+
+            // Update display
+            document.getElementById('result-cvs').textContent = formatNumber(resultCvs);
+            document.getElementById('result-interviews').textContent = formatNumber(resultInterviews);
+            document.getElementById('result-offers').textContent = formatNumber(resultOffers);
+            document.getElementById('result-deals').textContent = formatNumber(resultDeals);
+
+            // Show/hide revenue card - only show if 1+ deals
+            const revenueCard = document.getElementById('revenue-display');
+            if (showRevenue && resultDeals >= 1) {
+                revenueCard.style.display = 'block';
+                document.getElementById('total-revenue').textContent = formatCurrency(totalRevenue);
+            } else {
+                revenueCard.style.display = 'none';
+            }
+
+            // Show quarterly breakdown only for revenue target input
+            const quarterlySection = document.getElementById('quarterly-display');
+            if (revenue > 0) {
+                quarterlySection.style.display = 'block';
+                updateQuarterlyBreakdown(resultCvs, resultInterviews, resultOffers, resultDeals, totalRevenue);
+            } else {
+                quarterlySection.style.display = 'none';
+            }
+        }
+
+        function updateQuarterlyBreakdown(totalCvs, totalInterviews, totalOffers, totalDeals, totalRevenue) {
+            const periodType = document.getElementById('period-select').value;
+            const breakdownTitle = document.getElementById('breakdown-title');
+            const breakdownGrid = document.getElementById('breakdown-grid');
+            
+            let periods = [];
+            let divisor = 1;
+            
+            if (periodType === 'quarterly') {
+                periods = [{name: 'Q1', id: 'q1'}, {name: 'Q2', id: 'q2'}, {name: 'Q3', id: 'q3'}, {name: 'Q4', id: 'q4'}];
+                divisor = 4;
+                breakdownTitle.textContent = 'Quarterly Breakdown';
+            } else if (periodType === 'monthly') {
+                periods = [
+                    {name: 'Jan', id: 'm1'}, {name: 'Feb', id: 'm2'}, {name: 'Mar', id: 'm3'},
+                    {name: 'Apr', id: 'm4'}, {name: 'May', id: 'm5'}, {name: 'Jun', id: 'm6'},
+                    {name: 'Jul', id: 'm7'}, {name: 'Aug', id: 'm8'}, {name: 'Sep', id: 'm9'},
+                    {name: 'Oct', id: 'm10'}, {name: 'Nov', id: 'm11'}, {name: 'Dec', id: 'm12'}
+                ];
+                divisor = 12;
+                breakdownTitle.textContent = 'Monthly Breakdown';
+            } else if (periodType === 'yearly') {
+                periods = [{name: 'Annual', id: 'y1'}];
+                divisor = 1;
+                breakdownTitle.textContent = 'Annual Breakdown';
+            }
+            
+            // Clear and rebuild the grid
+            breakdownGrid.innerHTML = '';
+            
+            periods.forEach(period => {
+                const periodCvs = totalCvs / divisor;
+                const periodInterviews = totalInterviews / divisor;
+                const periodOffers = totalOffers / divisor;
+                const periodDeals = totalDeals / divisor;
+                const periodRevenue = totalRevenue / divisor;
+                
+                // Only show revenue if period deals >= 0.1
+                const showPeriodRevenue = periodDeals >= 0.1;
+                
+                const revenueSection = showPeriodRevenue ? `
+                    <div class="quarter-revenue">
+                        <div class="revenue-label">Target Revenue</div>
+                        <div class="revenue-amount">${formatCurrency(periodRevenue)}</div>
+                    </div>
+                ` : '';
+                
+                const periodCard = document.createElement('div');
+                periodCard.className = 'quarter-card';
+                periodCard.innerHTML = `
+                    <h4>${period.name}</h4>
+                    <div>
+                        ${revenueSection}
+                        <div class="quarter-metrics">
+                            <div class="metric-item">
+                                <div class="metric-value">${formatNumber(periodCvs)}</div>
+                                <div class="metric-label">CVs</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value">${formatNumber(periodInterviews)}</div>
+                                <div class="metric-label">Interviews</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value">${formatNumber(periodOffers)}</div>
+                                <div class="metric-label">Offers</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value">${formatNumber(periodDeals)}</div>
+                                <div class="metric-label">Deals</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                breakdownGrid.appendChild(periodCard);
+            });
+        }
+
+        function clearAll() {
+            document.getElementById('cvs').value = '';
+            document.getElementById('interviews').value = '';
+            document.getElementById('offers').value = '';
+            document.getElementById('deals').value = '';
+            calculate();
+        }
+
+        function clearRevenue() {
+            document.getElementById('revenue').value = '';
+            calculate();
+        }
+
+        // Clear other inputs when one is entered to avoid confusion
+        function clearOthers(currentId) {
+            const inputs = ['cvs', 'interviews', 'offers', 'deals'];
+            inputs.forEach(id => {
+                if (id !== currentId) {
+                    document.getElementById(id).value = '';
+                }
+            });
+        }
+
+        function clearRevenueInput() {
+            document.getElementById('revenue').value = '';
+        }
+
+        // Add event listeners
+        document.getElementById('cvs').addEventListener('input', function() {
+            if (this.value) {
+                clearOthers('cvs');
+                clearRevenueInput();
+            }
+            calculate();
+        });
+        document.getElementById('interviews').addEventListener('input', function() {
+            if (this.value) {
+                clearOthers('interviews');
+                clearRevenueInput();
+            }
+            calculate();
+        });
+        document.getElementById('offers').addEventListener('input', function() {
+            if (this.value) {
+                clearOthers('offers');
+                clearRevenueInput();
+            }
+            calculate();
+        });
+        document.getElementById('deals').addEventListener('input', function() {
+            if (this.value) {
+                clearOthers('deals');
+                clearRevenueInput();
+            }
+            calculate();
+        });
+        document.getElementById('revenue').addEventListener('input', function() {
+            if (this.value) {
+                // Clear all metric inputs when revenue is entered
+                document.getElementById('cvs').value = '';
+                document.getElementById('interviews').value = '';
+                document.getElementById('offers').value = '';
+                document.getElementById('deals').value = '';
+            }
+            calculate();
+        });
+        
+        document.getElementById('period-select').addEventListener('change', function() {
+            calculate(); // Recalculate when period changes
+        });
+
+        // Initialize
+        calculate();
+    </script>
+</body>
+</html>
