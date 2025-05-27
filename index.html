@@ -373,8 +373,14 @@
         function formatNumber(num) {
             if (num < 1 && num > 0) {
                 return num.toFixed(1);
+            } else if (num >= 1 && num < 10) {
+                return num.toFixed(1);
             }
             return Math.round(num).toLocaleString();
+        }
+
+        function formatDealsForRevenue(num) {
+            return Math.floor(num); // Always round down to whole number for revenue calculations
         }
 
         function formatCurrency(num) {
@@ -433,7 +439,7 @@
                 showRevenue = true;
             }
 
-            const totalRevenue = resultDeals * RATIOS.averageDealSize;
+            const totalRevenue = formatDealsForRevenue(resultDeals) * RATIOS.averageDealSize;
 
             // Update display
             document.getElementById('result-cvs').textContent = formatNumber(resultCvs);
@@ -441,9 +447,10 @@
             document.getElementById('result-offers').textContent = formatNumber(resultOffers);
             document.getElementById('result-deals').textContent = formatNumber(resultDeals);
 
-            // Show/hide revenue card - only show if 1+ deals
+            // Show/hide revenue card - only show if whole deals >= 1
             const revenueCard = document.getElementById('revenue-display');
-            if (showRevenue && resultDeals >= 1) {
+            const wholeDeals = formatDealsForRevenue(resultDeals);
+            if (showRevenue && wholeDeals >= 1) {
                 revenueCard.style.display = 'block';
                 document.getElementById('total-revenue').textContent = formatCurrency(totalRevenue);
             } else {
@@ -454,13 +461,13 @@
             const quarterlySection = document.getElementById('quarterly-display');
             if (revenue > 0) {
                 quarterlySection.style.display = 'block';
-                updateQuarterlyBreakdown(resultCvs, resultInterviews, resultOffers, resultDeals, totalRevenue);
+                updateQuarterlyBreakdown(resultCvs, resultInterviews, resultOffers, resultDeals, revenue);
             } else {
                 quarterlySection.style.display = 'none';
             }
         }
 
-        function updateQuarterlyBreakdown(totalCvs, totalInterviews, totalOffers, totalDeals, totalRevenue) {
+        function updateQuarterlyBreakdown(totalCvs, totalInterviews, totalOffers, totalDeals, originalRevenue) {
             const periodType = document.getElementById('period-select').value;
             const breakdownTitle = document.getElementById('breakdown-title');
             const breakdownGrid = document.getElementById('breakdown-grid');
@@ -495,9 +502,9 @@
                 const periodInterviews = totalInterviews / divisor;
                 const periodOffers = totalOffers / divisor;
                 const periodDeals = totalDeals / divisor;
-                const periodRevenue = totalRevenue / divisor;
+                const periodRevenue = originalRevenue / divisor;
                 
-                // Only show revenue if period deals >= 0.1
+                // Show revenue if there are any deals expected
                 const showPeriodRevenue = periodDeals >= 0.1;
                 
                 const revenueSection = showPeriodRevenue ? `
