@@ -441,13 +441,14 @@
                 <div class="input-row">
                     <div class="input-group">
                         <label for="revenue">Annual Revenue Target (£)</label>
-                        <input type="number" id="revenue" placeholder="e.g. 500000" min="0">
+                        <input type="number" id="revenue" placeholder="e.g. 200000" min="0">
                     </div>
                     <div class="input-group">
                         <label for="period-select">View By</label>
                         <select id="period-select">
-                            <option value="quarterly">Quarterly</option>
+                            <option value="weekly">Weekly</option>
                             <option value="monthly">Monthly</option>
+                            <option value="quarterly">Quarterly</option>
                             <option value="yearly">Yearly</option>
                         </select>
                     </div>
@@ -583,7 +584,14 @@
             let periods = [];
             let divisor = 1;
             
-            if (periodType === 'quarterly') {
+            if (periodType === 'weekly') {
+                periods = [];
+                for (let i = 1; i <= 52; i++) {
+                    periods.push({name: `Week ${i}`, id: `w${i}`});
+                }
+                divisor = 52;
+                breakdownTitle.textContent = 'Weekly Breakdown';
+            } else if (periodType === 'monthly') {
                 periods = [{name: 'Q1', id: 'q1'}, {name: 'Q2', id: 'q2'}, {name: 'Q3', id: 'q3'}, {name: 'Q4', id: 'q4'}];
                 divisor = 4;
                 breakdownTitle.textContent = 'Quarterly Breakdown';
