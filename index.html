@@ -166,27 +166,6 @@
             color: #333;
         }
         
-        .info-box {
-            background: #e3f2fd;
-            border: 1px solid #bbdefb;
-            border-radius: 4px;
-            padding: 12px;
-            margin-bottom: 16px;
-        }
-        
-        .info-box h4 {
-            font-size: 0.85rem;
-            color: #1976d2;
-            margin-bottom: 4px;
-            font-weight: 600;
-        }
-        
-        .info-box p {
-            font-size: 0.8rem;
-            color: #1565c0;
-            margin: 2px 0;
-        }
-        
         .earnings-section {
             background: linear-gradient(135deg, #f8f9fa 0%, #e9f4ff 100%);
             color: #333;
@@ -236,14 +215,6 @@
         
         .btn:hover {
             background: #5a6268;
-        }
-        
-        .btn-primary {
-            background: #4285f4;
-        }
-        
-        .btn-primary:hover {
-            background: #3367d6;
         }
         
         .breakdown-section {
@@ -425,43 +396,43 @@
                     <button class="btn" onclick="clearAll()">🔄 Clear All Fields</button>
                 </div>
             </div>
-        </div>
-        
-        <div class="section" style="margin-bottom: 20px;">
-            <div class="section-header">
-                <span>💷</span>
-                <h2>Revenue Planning</h2>
-                <span class="toggle">▼</span>
-            </div>
-            <div class="section-content">
-                <p style="color: #6c757d; margin-bottom: 16px; font-size: 0.9rem;">
-                    Enter your annual revenue target to see breakdown by period
-                </p>
-                
-                <div class="input-row">
-                    <div class="input-group">
-                        <label for="revenue">Annual Revenue Target (£)</label>
-                        <input type="number" id="revenue" placeholder="e.g. 200000" min="0">
-                    </div>
-                    <div class="input-group">
-                        <label for="period-select">View By</label>
-                        <select id="period-select">
-                            <option value="weekly">Weekly</option>
-                            <option value="monthly">Monthly</option>
-                            <option value="quarterly">Quarterly</option>
-                            <option value="yearly">Yearly</option>
-                        </select>
-                    </div>
+            
+            <div class="section">
+                <div class="section-header">
+                    <span>💷</span>
+                    <h2>Revenue Planning</h2>
+                    <span class="toggle">▼</span>
                 </div>
-                
-                <button class="btn" onclick="clearRevenue()">🔄 Clear Revenue Target</button>
+                <div class="section-content">
+                    <p style="color: #6c757d; margin-bottom: 16px; font-size: 0.9rem;">
+                        Enter your annual revenue target to see breakdown by period
+                    </p>
+                    
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="revenue">Annual Revenue Target (£)</label>
+                            <input type="number" id="revenue" placeholder="e.g. 200000" min="0">
+                        </div>
+                        <div class="input-group">
+                            <label for="period-select">View By</label>
+                            <select id="period-select">
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                                <option value="quarterly">Quarterly</option>
+                                <option value="yearly">Yearly</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button class="btn" onclick="clearRevenue()">🔄 Clear Revenue Target</button>
+                </div>
             </div>
         </div>
         
         <div class="breakdown-section" id="breakdown-display">
             <div class="section-header">
                 <span>📅</span>
-                <h2 id="breakdown-title">Quarterly Breakdown</h2>
+                <h2 id="breakdown-title">Breakdown</h2>
                 <span class="toggle">▼</span>
             </div>
             <div class="breakdown-grid" id="breakdown-grid">
@@ -476,9 +447,9 @@
 
     <script>
         const RATIOS = {
-            cvsToInterviews: 849 / 2652,      // 32.0%
-            interviewsToOffers: 202 / 849,    // 23.8%
-            offersToDeals: 101 / 202,         // 50.0%
+            cvsToInterviews: 849 / 2652,
+            interviewsToOffers: 202 / 849,
+            offersToDeals: 101 / 202,
             averageDealSize: 22000
         };
 
@@ -489,10 +460,6 @@
                 return num.toFixed(1);
             }
             return Math.round(num).toLocaleString();
-        }
-
-        function formatDealsForRevenue(num) {
-            return Math.floor(num);
         }
 
         function formatCurrency(num) {
@@ -517,7 +484,6 @@
             let resultDeals = 0;
             let showRevenue = false;
 
-            // Calculate based on which input has a value
             if (revenue > 0) {
                 resultDeals = revenue / RATIOS.averageDealSize;
                 resultOffers = resultDeals / RATIOS.offersToDeals;
@@ -551,13 +517,11 @@
 
             const totalRevenue = resultDeals * RATIOS.averageDealSize;
 
-            // Update display
             document.getElementById('result-cvs').textContent = formatNumber(resultCvs);
             document.getElementById('result-interviews').textContent = formatNumber(resultInterviews);
             document.getElementById('result-offers').textContent = formatNumber(resultOffers);
             document.getElementById('result-deals').textContent = formatNumber(resultDeals);
 
-            // Show predicted billings only when metrics are entered and deals >= 0.5
             const revenueCard = document.getElementById('revenue-display');
             if (showRevenue && resultDeals >= 0.5) {
                 revenueCard.style.display = 'block';
@@ -566,7 +530,6 @@
                 revenueCard.style.display = 'none';
             }
 
-            // Show breakdown only for revenue target input
             const breakdownSection = document.getElementById('breakdown-display');
             if (revenue > 0) {
                 breakdownSection.style.display = 'block';
@@ -585,32 +548,29 @@
             let divisor = 1;
             
             if (periodType === 'weekly') {
-                periods = [];
                 for (let i = 1; i <= 52; i++) {
-                    periods.push({name: `Week ${i}`, id: `w${i}`});
+                    periods.push({name: `Week ${i}`});
                 }
                 divisor = 52;
                 breakdownTitle.textContent = 'Weekly Breakdown';
             } else if (periodType === 'monthly') {
-                periods = [{name: 'Q1', id: 'q1'}, {name: 'Q2', id: 'q2'}, {name: 'Q3', id: 'q3'}, {name: 'Q4', id: 'q4'}];
-                divisor = 4;
-                breakdownTitle.textContent = 'Quarterly Breakdown';
-            } else if (periodType === 'monthly') {
                 periods = [
-                    {name: 'Jan', id: 'm1'}, {name: 'Feb', id: 'm2'}, {name: 'Mar', id: 'm3'},
-                    {name: 'Apr', id: 'm4'}, {name: 'May', id: 'm5'}, {name: 'Jun', id: 'm6'},
-                    {name: 'Jul', id: 'm7'}, {name: 'Aug', id: 'm8'}, {name: 'Sep', id: 'm9'},
-                    {name: 'Oct', id: 'm10'}, {name: 'Nov', id: 'm11'}, {name: 'Dec', id: 'm12'}
+                    {name: 'Jan'}, {name: 'Feb'}, {name: 'Mar'}, {name: 'Apr'},
+                    {name: 'May'}, {name: 'Jun'}, {name: 'Jul'}, {name: 'Aug'},
+                    {name: 'Sep'}, {name: 'Oct'}, {name: 'Nov'}, {name: 'Dec'}
                 ];
                 divisor = 12;
                 breakdownTitle.textContent = 'Monthly Breakdown';
+            } else if (periodType === 'quarterly') {
+                periods = [{name: 'Q1'}, {name: 'Q2'}, {name: 'Q3'}, {name: 'Q4'}];
+                divisor = 4;
+                breakdownTitle.textContent = 'Quarterly Breakdown';
             } else if (periodType === 'yearly') {
-                periods = [{name: 'Annual', id: 'y1'}];
+                periods = [{name: 'Annual'}];
                 divisor = 1;
                 breakdownTitle.textContent = 'Annual Breakdown';
             }
             
-            // Clear and rebuild the grid
             breakdownGrid.innerHTML = '';
             
             periods.forEach(period => {
@@ -620,20 +580,14 @@
                 const periodDeals = totalDeals / divisor;
                 const periodRevenue = originalRevenue / divisor;
                 
-                const showPeriodRevenue = periodDeals >= 0.1;
-                
-                const revenueSection = showPeriodRevenue ? `
-                    <div class="period-revenue">
-                        <div class="label">Target Revenue</div>
-                        <div class="amount">${formatCurrency(periodRevenue)}</div>
-                    </div>
-                ` : '';
-                
                 const periodCard = document.createElement('div');
                 periodCard.className = 'period-card';
                 periodCard.innerHTML = `
                     <h4>${period.name}</h4>
-                    ${revenueSection}
+                    <div class="period-revenue">
+                        <div class="label">Target Revenue</div>
+                        <div class="amount">${formatCurrency(periodRevenue)}</div>
+                    </div>
                     <div class="period-metrics">
                         <div class="metric-item">
                             <div class="value">${formatNumber(periodCvs)}</div>
@@ -653,7 +607,6 @@
                         </div>
                     </div>
                 `;
-                
                 breakdownGrid.appendChild(periodCard);
             });
         }
@@ -684,7 +637,6 @@
             document.getElementById('revenue').value = '';
         }
 
-        // Add event listeners
         document.getElementById('cvs').addEventListener('input', function() {
             if (this.value) {
                 clearOthers('cvs');
@@ -727,7 +679,6 @@
             calculate();
         });
 
-        // Initialize
         calculate();
     </script>
 </body>
